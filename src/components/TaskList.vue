@@ -1,5 +1,8 @@
 <template>
-  <h1>List of tasks</h1>
+  <div>
+    <h1>List of tasks</h1>
+    <button id="create-task-button" @click="$router.push({name: 'task-create'})">Create task</button>
+  </div>
   <div>
     <table>
       <thead>
@@ -17,7 +20,7 @@
           <td>{{ task.title }}</td>
           <td>{{ task.description }}</td>
           <td>{{ task.done }}</td>
-          <td>{{ task.created.split("T").join(" ") }}</td>
+          <td>{{ task.created.split("T").join(" ").split(".")[0] }}</td>
           <td>{{ task.finished ? task.finished.split("T").join(" ").split(".")[0] : null }}</td>
           <td><RouterLink :to="{ name: 'task-edit', params: { id: task.id }}">Edit</RouterLink></td>
         </tr>
@@ -57,5 +60,14 @@ th, td {
 }
 tr:hover td {
   background-color: #aaaaaa;
+}
+#create-task-button{
+  position: absolute;
+  right: 170px;
+  top: 15px;
+  padding: 5px 15px;
+  background-color: lightgreen;
+  border-radius: 10px;
+  cursor: pointer;
 }
 </style>

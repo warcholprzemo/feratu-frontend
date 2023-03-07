@@ -4,7 +4,7 @@
     <button id="create-task-button" @click="$router.push({name: 'task-create'})">Create task</button>
   </div>
   <div>
-    <table>
+    <table :key="main_table_key">
       <thead>
         <tr>
           <th>Title</th>
@@ -16,13 +16,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="task in tasks">
+        <tr v-for="(task, index) in tasks">
           <td>{{ task.title }}</td>
           <td>{{ task.description }}</td>
           <td>{{ task.done }}</td>
           <td>{{ task.created.split("T").join(" ").split(".")[0] }}</td>
           <td>{{ task.finished ? task.finished.split("T").join(" ").split(".")[0] : null }}</td>
-          <td><RouterLink :to="{ name: 'task-edit', params: { id: task.id }}">Edit</RouterLink></td>
+          <td>
+            <RouterLink :to="{ name: 'task-edit', params: { id: task.id }}">Edit</RouterLink>
+            <span id="delete-task" @click="delete_task(task, index)">Delete</span>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -32,6 +35,9 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import axios from 'axios'
+import { ref } from "vue";
+
+let main_table_key = ref(1);
 
 let tasks = await axios
     .get('http://localhost:8001/tasks/')
@@ -42,6 +48,20 @@ let tasks = await axios
       console.log(error);
       return [];
     });
+
+async function delete_task(task, index) {
+  if (confirm("Do you want to remove: " + task.title)) {
+    await axios
+      .delete('http://localhost:8001/tasks/' + task.id)
+      .then(() => {
+        tasks.splice(index, 1);
+        main_table_key.value += 1;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+}
 </script>
 
 <style scoped>
@@ -68,6 +88,11 @@ tr:hover td {
   padding: 5px 15px;
   background-color: lightgreen;
   border-radius: 10px;
+  cursor: pointer;
+}
+#delete-task {
+  color: hsla(160, 100%, 37%, 1);
+  padding-left: 10px;
   cursor: pointer;
 }
 </style>

@@ -33,14 +33,15 @@
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
 import { ref } from "vue";
 
+const router = useRouter();
 let main_table_key = ref(1);
 
 let tasks = await axios
-    .get('http://localhost:8001/tasks/')
+    .get(router.options.base + '/tasks/')
     .then(response => {
       return response.data;
     })
@@ -52,7 +53,7 @@ let tasks = await axios
 async function delete_task(task, index) {
   if (confirm("Do you want to remove: " + task.title)) {
     await axios
-      .delete('http://localhost:8001/tasks/' + task.id)
+      .delete(router.options.base + '/tasks/' + task.id)
       .then(() => {
         tasks.splice(index, 1);
         main_table_key.value += 1;

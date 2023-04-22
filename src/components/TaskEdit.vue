@@ -31,17 +31,18 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from "axios";
 import { ref } from 'vue';
 
 const route = useRoute();
+const router = useRouter();
 let update_info_text = ref();
 let update_info_class = "";
 
 const task_id = route.params.id;
 let task = await axios
-  .get('http://localhost:8001/tasks/' + task_id )
+  .get(router.options.base + '/tasks/' + task_id )
   .then(response => {
     return response.data;
   })
@@ -52,7 +53,7 @@ let task = await axios
 
 async function update_task() {
   await axios
-    .put('http://localhost:8001/tasks/' + task_id,{
+    .put(router.options.base + '/tasks/' + task_id,{
       'title': task.title,
       'description': task.description,
       'done': task.done,

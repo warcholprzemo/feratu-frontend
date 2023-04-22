@@ -44,7 +44,7 @@ async function create_task() {
     title_errors.value = "";
   }
   await axios
-    .post("http://localhost:8001/tasks/", task)
+    .post(router.options.base + "/tasks/", task)
     .then(response => {
       router.push({name: 'task-list'})
     })

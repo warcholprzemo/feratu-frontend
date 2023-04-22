@@ -34,7 +34,9 @@ const router = createRouter({
       name: 'calendar',
       component: () => import('../views/CalendarView.vue')
     }
-  ]
+  ],
+  //base: 'http://localhost:8001'
+  base: 'https://app-462glznbea-ew.a.run.app'
 })
 
 export default router

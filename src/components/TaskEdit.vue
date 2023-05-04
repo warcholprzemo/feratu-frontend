@@ -23,6 +23,24 @@
         <td>{{ task.finished ? task.finished.split("T").join(" ").split(".")[0] : null }}</td>
       </tr>
     </table>
+
+    <div v-if="task.comments" class="comments">
+      <h3>Comments</h3>
+      <table>
+        <tr>
+          <th>Author</th>
+          <th>Message</th>
+        </tr>
+        <tr v-for="(comment, index) in task.comments">
+          <td>{{ comment.author }}</td>
+          <td>{{ comment.message }}</td>
+        </tr>
+      </table>
+    </div>
+    <div v-else class="comments">
+      <h3>No comments yet</h3>
+    </div>
+
     <div id="update-section">
       <button id="update-button" @click="update_task">Update</button>
       <span id="update-info" :class="update_info_class">{{ update_info_text }}</span>
@@ -85,6 +103,9 @@ table, th, td{
 th, td {
   padding: 4px;
 }
+th {
+  font-weight: bold;
+}
 #update-section{
   text-align: center;
   margin-left: auto;
@@ -99,5 +120,14 @@ th, td {
 }
 .error_data{
   color: #FF0000;
+}
+.comments{
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  display: block;
+  padding:10px;
+  background-color: aquamarine;
 }
 </style>

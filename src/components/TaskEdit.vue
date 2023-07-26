@@ -24,21 +24,26 @@
       </tr>
     </table>
 
-    <div v-if="task.comments" class="comments">
-      <h3>Comments</h3>
-      <table>
-        <tr>
-          <th>Author</th>
-          <th>Message</th>
-        </tr>
-        <tr v-for="(comment, index) in task.comments">
-          <td>{{ comment.author }}</td>
-          <td>{{ comment.message }}</td>
-        </tr>
-      </table>
-    </div>
-    <div v-else class="comments">
-      <h3>No comments yet</h3>
+    <div class="uber-comments">
+      <div v-if="task.comments" class="comments">
+        <h3>Comments</h3>
+        <ul v-for="(comment, index) in task.comments">
+          <li>
+            <span class="comment-author">{{ comment.author }}</span><br />
+            {{ comment.message }}
+          </li>
+        </ul>
+      </div>
+      <div v-else class="comments">
+        <h3>No comments yet</h3>
+      </div>
+      <div class="add-comment">
+        <h3>You can add new comment</h3>
+        <div class="add-comment-grid">
+          <div>Author</div><div><input type="text" v-model="new_comment.author" /></div>
+          <div>Message</div><div><input type="text" v-model="new_comment.message" /></div>
+        </div>
+      </div>
     </div>
 
     <div id="update-section">
@@ -69,18 +74,47 @@ let task = await axios
     return {};
   });
 
+let new_comment = {
+  author: "",
+  message: "",
+};
+
 async function update_task() {
+  if (new_comment.author && !new_comment.message) {
+    alert("Put Message if you want to add new comment");
+    return;
+  }
+  if (!new_comment.author && new_comment.message) {
+    alert("Put Author if you want to add new comment");
+    return;
+  }
+  let request_data = {
+    title: task.title,
+    description: task.description,
+    done: task.done,
+    finished: task.finished,
+  };
+  let refresh_comments = false;
+  if (new_comment.author && new_comment.message) {
+    request_data["new_comment"] = new_comment;
+    refresh_comments = true;
+  }
   await axios
-    .put(router.options.base + '/tasks/' + task_id,{
-      'title': task.title,
-      'description': task.description,
-      'done': task.done,
-      'finished': task.finished
-    })
+    .put(router.options.base + '/tasks/' + task_id, request_data)
     .then(response => {
       update_info_text.value = response.data.info + " (" + new Date().toJSON().replace('T', ' ').split('.')[0] + ")";
       update_info_class = "correct_data";
       task.finished = response.data.finished;
+      if (refresh_comments) {
+        if (!task["comments"]) {
+          task["comments"] = [];
+        }
+        task["comments"].push(Object.assign({}, new_comment));
+        new_comment = {
+          author: "",
+          message: "",
+        };
+      }
     })
     .catch(error => {
       update_info_text.value = error.message;
@@ -121,13 +155,22 @@ th {
 .error_data{
   color: #FF0000;
 }
-.comments{
-  text-align: center;
+.comments, .add-comment{
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
   display: block;
   padding:10px;
-  background-color: aquamarine;
+  width: 400px;
+}
+.add-comment-grid{
+  display: grid;
+  grid-template-columns: auto auto;
+}
+.uber-comments{
+  width: 100%;
+}
+.comment-author{
+  font-weight: bold;
 }
 </style>

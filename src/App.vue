@@ -11,6 +11,8 @@ import { RouterLink, RouterView } from 'vue-router'
           <RouterLink to="/">List of tasks</RouterLink>
           <RouterLink to="/about">About</RouterLink>
           <RouterLink to="/calendar">Calendar</RouterLink>
+          <RouterLink to="/login">Login page</RouterLink>
+          <RouterLink to="/logout">Logout</RouterLink>
         </nav>
       </div>
     </header>
